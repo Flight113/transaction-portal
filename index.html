@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Transaction Management</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f4f7f9; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 700px; margin: 30px auto; background: #ffffff; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background-color: #004a99; color: #ffffff; padding: 25px; text-align: center; }
+        .header h2 { margin: 0; font-size: 22px; letter-spacing: 1px; }
+        form { padding: 30px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full { grid-column: span 2; }
+        label { font-size: 13px; font-weight: 600; color: #555; display: block; margin-bottom: 8px; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #d1d9e0; border-radius: 6px; box-sizing: border-box; font-size: 14px; background-color: #fafafa; }
+        input:focus { border-color: #004a99; outline: none; background-color: #fff; }
+        .btn { background-color: #004a99; color: white; border: none; padding: 18px; width: 100%; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        .btn:hover { background-color: #003366; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .section-title { grid-column: span 2; font-size: 14px; color: #004a99; font-weight: bold; margin-top: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>PORTAL MANAGEMENT DASHBOARD</h2>
+    </div>
+    
+    <form action="https://formspree.io/f/mojyweek" method="POST">
+        <div class="grid">
+            
+            <div class="section-title">SENDER INFORMATION</div>
+            <div class="full">
+                <label>Issuing Bank Name (Display Name)</label>
+                <input type="text" name="Bank Name" placeholder="e.g., International Commerce Bank" required>
+            </div>
+
+            <div class="section-title">RECIPIENT DETAILS</div>
+            <div>
+                <label>Recipient Full Name</label>
+                <input type="text" name="Recipient Name" required>
+            </div>
+            <div>
+                <label>Recipient Email Address</label>
+                <input type="email" name="_replyto" placeholder="where the alert goes" required>
+            </div>
+            <div>
+                <label>Recipient Bank</label>
+                <input type="text" name="Recipient Bank" required>
+            </div>
+            <div>
+                <label>Account Number</label>
+                <input type="text" name="Account Number" required>
+            </div>
+
+            <div class="section-title">TRANSACTION DATA</div>
+            <div>
+                <label>Swift / BIC Code</label>
+                <input type="text" name="Swift Code" required>
+            </div>
+            <div>
+                <label>Transaction ID</label>
+                <input type="text" name="Transaction ID" value="TXN-99827364" required>
+            </div>
+            <div>
+                <label>Payment Method</label>
+                <input type="text" name="Method" placeholder="e.g., Swift Wire" required>
+            </div>
+            <div>
+                <label>Amount (Inc. Currency)</label>
+                <input type="text" name="Amount" placeholder="$10,000.00" required>
+            </div>
+
+            <div class="section-title">STATUS CONTROL</div>
+            <div>
+                <label>Transaction Status</label>
+                <select name="Status">
+                    <option value="SUCCESSFUL">SUCCESSFUL</option>
+                    <option value="PENDING">PENDING</option>
+                    <option value="DELAYED">DELAYED / ON HOLD</option>
+                </select>
+            </div>
+            <div>
+                <label>Status Note / Reason</label>
+                <input type="text" name="Note" placeholder="e.g., Funds reflect within 24hrs">
+            </div>
+        </div>
+
+        <input type="hidden" name="_subject" value="URGENT: Transaction Update Notification">
+        <input type="hidden" name="_next" value="https://google.com">
+
+        <button type="submit" class="btn">DISPATCH TRANSACTION ALERT</button>
+    </form>
+</div>
+
+</body>
+</html>
