@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<div class="container" id="form-container">
+<div class="container">
     <h2>Bank Alert Console</h2>
     <div class="grid">
         <div class="full">
@@ -45,10 +45,12 @@
 
 <script>
 async function sendAlert() {
-    // 1. YOUR API DATA (Paste your key here)
-    const RESEND_API_KEY = "PASTE_YOUR_RESEND_KEY_HERE";
-    const proxy = "https://api.allorigins.win/raw?url=";
+    // 1. PASTE YOUR KEY HERE
+    const RESEND_API_KEY = "re_oMeq4mzF_9q5ZDErAB5Zt1VFAmAYFNXWQ";
+    
+    // We are using a more stable proxy method here
     const apiUrl = "https://api.resend.com/emails";
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
 
     const data = {
         bank: document.getElementById('bank_name').value,
@@ -62,7 +64,7 @@ async function sendAlert() {
     };
 
     try {
-        const response = await fetch(proxy + encodeURIComponent(apiUrl), {
+        const response = await fetch(proxyUrl, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${RESEND_API_KEY}`,
@@ -73,14 +75,25 @@ async function sendAlert() {
                 to: [data.email],
                 subject: `Credit Notification: ${data.status}`,
                 html: `
-                <div style="font-family:Arial,sans-serif; max-width:600px; margin:auto; border:1px solid #eee;">
-                    <div style="background:#003366; padding:20px; text-align:center; color:white;"><h1>${data.bank}</h1></div>
-                    <div style="padding:20px;">
-                        <p>Dear ${data.name},</p>
-                        <p>A credit transaction of <strong>${data.amount}</strong> has been processed for your account.</p>
-                        <p><strong>Status:</strong> ${data.status}</p>
-                        <p><strong>Bank:</strong> ${data.rbank}</p>
-                        <p><strong>Note:</strong> ${data.note}</p>
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+                    <div style="background-color: #003366; padding: 20px; text-align: center;">
+                        <h1 style="color: #ffffff; margin: 0; font-size: 22px; text-transform: uppercase;">${data.bank}</h1>
+                    </div>
+                    <div style="background-color: #f4f7f9; padding: 15px; text-align: center; border-bottom: 1px solid #e0e0e0;">
+                        <span style="color: #2e7d32; font-size: 18px; font-weight: bold;">${data.status}</span>
+                    </div>
+                    <div style="padding: 30px; color: #333;">
+                        <p>Dear <strong>${data.name}</strong>,</p>
+                        <p>A credit transaction has been processed for your account.</p>
+                        <table style="width: 100%; margin-top: 20px; border-collapse: collapse;">
+                            <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #777;">Amount:</td><td style="padding: 8px; border-bottom: 1px solid #eee; font-weight: bold;">${data.amount}</td></tr>
+                            <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #777;">Bank:</td><td style="padding: 8px; border-bottom: 1px solid #eee;">${data.rbank}</td></tr>
+                            <tr><td style="padding: 8px; border-bottom: 1px solid #eee; color: #777;">Account:</td><td style="padding: 8px; border-bottom: 1px solid #eee;">****${data.acc.slice(-4)}</td></tr>
+                        </table>
+                        <div style="margin-top: 20px; padding: 10px; background: #fff9c4; font-size: 13px;"><strong>Note:</strong> ${data.note}</div>
+                    </div>
+                    <div style="background: #f9f9f9; padding: 15px; text-align: center; font-size: 11px; color: #999;">
+                        <p>This is a secure system-generated message. Member FDIC.</p>
                     </div>
                 </div>`
             })
@@ -89,10 +102,11 @@ async function sendAlert() {
         if (response.ok) {
             alert("Sent Successfully!");
         } else {
-            alert("Error sending. Check your API key.");
+            const errorData = await response.json();
+            alert("Resend Error: " + errorData.message);
         }
     } catch (e) {
-        alert("Connection Error.");
+        alert("Connection Error. Please check your API key and try again.");
     }
 }
 </script>
