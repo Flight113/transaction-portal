@@ -1,56 +1,75 @@
-html: `
-<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
-    <div style="background-color: #003366; padding: 20px; text-align: center;">
-        <h1 style="color: #ffffff; margin: 0; font-size: 22px; letter-spacing: 1px; text-transform: uppercase;">${data.bank}</h1>
-    </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Bank Alert Console</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; padding: 20px; color: #1c1e21; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 10px solid #003366; }
+        h2 { color: #003366; text-align: center; margin-bottom: 30px; font-weight: 600; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full { grid-column: span 2; }
+        label { display: block; font-size: 12px; font-weight: bold; color: #4b4f56; margin-bottom: 8px; text-transform: uppercase; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #dddfe2; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+        input:focus { border-color: #003366; outline: none; box-shadow: 0 0 0 2px rgba(0,51,102,0.1); }
+        button { width: 100%; padding: 18px; background: #003366; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 30px; transition: background 0.2s; }
+        button:hover { background: #002244; }
+    </style>
+</head>
+<body>
 
-    <div style="background-color: #f4f7f9; padding: 15px; text-align: center; border-bottom: 1px solid #e0e0e0;">
-        <span style="color: #555; font-size: 12px; font-weight: bold; text-transform: uppercase;">Transaction Status</span><br>
-        <span style="color: #2e7d32; font-size: 18px; font-weight: bold;">${data.status}</span>
-    </div>
-
-    <div style="padding: 30px; line-height: 1.6; color: #333333;">
-        <p style="font-size: 16px;">Dear <strong>${data.name}</strong>,</p>
-        <p style="font-size: 14px; color: #555;">This is an automated notification to confirm that a credit transaction has been successfully processed for your account today, ${new Date().toLocaleDateString()}.</p>
-        
-        <table style="width: 100%; margin-top: 20px; border-collapse: collapse;">
-            <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #f0f0f0; font-size: 13px; color: #777;">Amount:</td>
-                <td style="padding: 10px; border-bottom: 1px solid #f0f0f0; font-size: 15px; font-weight: bold; color: #003366;">${data.amount}</td>
-            </tr>
-            <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #f0f0f0; font-size: 13px; color: #777;">Reference:</td>
-                <td style="padding: 10px; border-bottom: 1px solid #f0f0f0; font-size: 14px;">TXN-${Math.floor(Math.random() * 1000000)}</td>
-            </tr>
-            <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #f0f0f0; font-size: 13px; color: #777;">Bank:</td>
-                <td style="padding: 10px; border-bottom: 1px solid #f0f0f0; font-size: 14px;">${data.rbank}</td>
-            </tr>
-            <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #f0f0f0; font-size: 13px; color: #777;">Account:</td>
-                <td style="padding: 10px; border-bottom: 1px solid #f0f0f0; font-size: 14px;">****${data.acc.slice(-4)}</td>
-            </tr>
-        </table>
-
-        <div style="margin-top: 25px; padding: 15px; background-color: #fff9c4; border-left: 4px solid #fbc02d; font-size: 13px;">
-            <strong>Bank Note:</strong> ${data.note}
+<div class="container">
+    <h2>Bank Alert Console</h2>
+    <div class="grid">
+        <div class="full">
+            <label>Sender Bank Name</label>
+            <input type="text" id="bank_name" placeholder="e.g., Chase Bank">
+        </div>
+        <div>
+            <label>Recipient Name</label>
+            <input type="text" id="to_name" placeholder="John Doe">
+        </div>
+        <div>
+            <label>Recipient Email</label>
+            <input type="email" id="to_email" placeholder="recipient@mail.com">
+        </div>
+        <div>
+            <label>Receiving Bank</label>
+            <input type="text" id="recp_bank" placeholder="e.g., Opay">
+        </div>
+        <div>
+            <label>Account Number</label>
+            <input type="text" id="acc_num" placeholder="e.g., 0123456789">
+        </div>
+        <div>
+            <label>Amount</label>
+            <input type="text" id="amount" placeholder="$0.00">
+        </div>
+        <div>
+            <label>Transaction Status</label>
+            <select id="status">
+                <option value="SUCCESSFUL">SUCCESSFUL</option>
+                <option value="PENDING">PENDING</option>
+                <option value="PROCESSING">PROCESSING</option>
+                <option value="ON HOLD">ON HOLD</option>
+            </select>
+        </div>
+        <div class="full">
+            <label>Transaction Memo / Note</label>
+            <input type="text" id="note" placeholder="e.g., Funds will be available shortly.">
         </div>
     </div>
-
-    <div style="background-color: #f9f9f9; padding: 20px; text-align: center; font-size: 11px; color: #999; border-top: 1px solid #e0e0e0;">
-        <p>This is a secure system-generated message. Please do not reply to this email.</p>
-        <p>&copy; ${new Date().getFullYear()} ${data.bank} Member FDIC. All Rights Reserved.</p>
-    </div>
+    <button onclick="sendAlert()">Transmit Professional Alert</button>
 </div>
-`
-
 
 <script>
-async function sendViaResend() {
-    const RESEND_API_KEY = "re_oMeq4mzF_9q5ZDErAB5Zt1VFAmAYFNXWQ";
-    // This is the middleman that fixes the "Failed to connect" error
-    const proxy = "https://cors-anywhere.herokuapp.com/";
-    const url = "https://api.resend.com/emails";
+async function sendAlert() {
+    // --- SETUP START ---
+    const RESEND_API_KEY = "PASTE_YOUR_RESEND_KEY_HERE"; 
+    const proxy = "https://api.allorigins.win/raw?url=";
+    const apiUrl = "https://api.resend.com/emails";
+    // --- SETUP END ---
 
     const data = {
         bank: document.getElementById('bank_name').value,
@@ -63,42 +82,75 @@ async function sendViaResend() {
         rbank: document.getElementById('recp_bank').value
     };
 
+    if(!data.email || !RESEND_API_KEY.startsWith("re_")) {
+        alert("Missing API Key or Recipient Email!");
+        return;
+    }
+
     try {
-        const response = await fetch(proxy + url, {
+        const response = await fetch(proxy + encodeURIComponent(apiUrl), {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${RESEND_API_KEY}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                from: `${data.bank} <onboarding@resend.dev>`,
+                from: `${data.bank} <onboarding@resend.dev>`, // Change onboarding@resend.dev to your verified email later
                 to: [data.email],
                 subject: `Credit Notification: ${data.status}`,
                 html: `
-                <div style="font-family:Arial, sans-serif; max-width:600px; padding:20px; border:1px solid #ddd;">
-                    <h1 style="color:#1a73e8; text-align:center;">${data.bank}</h1>
-                    <div style="background:#f8f9fa; padding:15px; text-align:center; font-weight:bold; font-size:18px;">${data.status}</div>
-                    <p>Dear ${data.name},</p>
-                    <p>A credit transaction has been processed for your account.</p>
-                    <hr border="0" style="border-top:1px solid #eee;">
-                    <p><strong>Amount:</strong> ${data.amount}</p>
-                    <p><strong>Receiving Bank:</strong> ${data.rbank}</p>
-                    <p><strong>Account Number:</strong> ****${data.acc.slice(-4)}</p>
-                    <p><strong>Note:</strong> ${data.note}</p>
-                    <p style="font-size:11px; color:#888; margin-top:40px;">This is an automated security alert. Do not reply.</p>
+                <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+                    <div style="background-color: #003366; padding: 25px; text-align: center;">
+                        <h1 style="color: #ffffff; margin: 0; font-size: 24px; letter-spacing: 1px; text-transform: uppercase;">${data.bank}</h1>
+                    </div>
+                    <div style="background-color: #f4f7f9; padding: 15px; text-align: center; border-bottom: 1px solid #e0e0e0;">
+                        <span style="color: #555; font-size: 12px; font-weight: bold; text-transform: uppercase;">Transaction Status</span><br>
+                        <span style="color: #2e7d32; font-size: 20px; font-weight: bold;">${data.status}</span>
+                    </div>
+                    <div style="padding: 30px; line-height: 1.6; color: #333333;">
+                        <p style="font-size: 16px;">Dear <strong>${data.name}</strong>,</p>
+                        <p style="font-size: 14px; color: #555;">This is an automated notification to confirm that a credit transaction has been successfully processed for your account.</p>
+                        <table style="width: 100%; margin-top: 20px; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 10px; border-bottom: 1px solid #f0f0f0; font-size: 13px; color: #777;">Amount:</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #f0f0f0; font-size: 16px; font-weight: bold; color: #003366;">${data.amount}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border-bottom: 1px solid #f0f0f0; font-size: 13px; color: #777;">Reference:</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #f0f0f0; font-size: 14px;">TXN-${Math.floor(Math.random() * 10000000)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border-bottom: 1px solid #f0f0f0; font-size: 13px; color: #777;">Receiving Bank:</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #f0f0f0; font-size: 14px;">${data.rbank}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border-bottom: 1px solid #f0f0f0; font-size: 13px; color: #777;">Account:</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #f0f0f0; font-size: 14px;">****${data.acc.slice(-4)}</td>
+                            </tr>
+                        </table>
+                        <div style="margin-top: 25px; padding: 15px; background-color: #fff9c4; border-left: 4px solid #fbc02d; font-size: 13px;">
+                            <strong>Note:</strong> ${data.note}
+                        </div>
+                    </div>
+                    <div style="background-color: #f9f9f9; padding: 20px; text-align: center; font-size: 11px; color: #999; border-top: 1px solid #e0e0e0;">
+                        <p>This is a secure system-generated message. Please do not reply.</p>
+                        <p>&copy; ${new Date().getFullYear()} ${data.bank} Member FDIC. All Rights Reserved.</p>
+                    </div>
                 </div>`
             })
         });
 
         if (response.ok) {
-            alert("Sent Successfully via Resend!");
+            alert("Sent Successfully! The recipient's alert is on its way.");
         } else {
             const err = await response.json();
             alert("Error: " + err.message);
         }
     } catch (e) {
-        // If this pops up, you need to click the "Request Access" link below!
-        alert("Proxy Error: Please visit the CORS Anywhere link first.");
+        alert("Connection Error. Please ensure your API key is valid.");
     }
 }
 </script>
+
+</body>
+</html>
