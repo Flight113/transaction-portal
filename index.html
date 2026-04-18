@@ -49,8 +49,10 @@
 
 <script>
 async function sendViaResend() {
-    // 1. YOUR API KEY
     const RESEND_API_KEY = "re_oMeq4mzF_9q5ZDErAB5Zt1VFAmAYFNXWQ";
+    // This is the middleman that fixes the "Failed to connect" error
+    const proxy = "https://cors-anywhere.herokuapp.com/";
+    const url = "https://api.resend.com/emails";
 
     const data = {
         bank: document.getElementById('bank_name').value,
@@ -64,18 +66,18 @@ async function sendViaResend() {
     };
 
     try {
-        const response = await fetch('https://api.resend.com/emails', {
+        const response = await fetch(proxy + url, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${RESEND_API_KEY}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                from: `${data.bank} <onboarding@resend.dev>`, // Uses Resend's default sender to ensure delivery
+                from: `${data.bank} <onboarding@resend.dev>`,
                 to: [data.email],
                 subject: `Credit Notification: ${data.status}`,
                 html: `
-                <div style="font-family:sans-serif; max-width:600px; padding:20px; border:1px solid #ddd;">
+                <div style="font-family:Arial, sans-serif; max-width:600px; padding:20px; border:1px solid #ddd;">
                     <h1 style="color:#1a73e8; text-align:center;">${data.bank}</h1>
                     <div style="background:#f8f9fa; padding:15px; text-align:center; font-weight:bold; font-size:18px;">${data.status}</div>
                     <p>Dear ${data.name},</p>
@@ -97,9 +99,8 @@ async function sendViaResend() {
             alert("Error: " + err.message);
         }
     } catch (e) {
-        alert("Failed to connect. Check your internet.");
+        // If this pops up, you need to click the "Request Access" link below!
+        alert("Proxy Error: Please visit the CORS Anywhere link first.");
     }
 }
 </script>
-</body>
-</html>
