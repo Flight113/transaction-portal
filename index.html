@@ -7,16 +7,16 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .container { background-color: #ffffff; width: 100%; max-width: 500px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 8px solid #003366; }
-        h2 { color: #003366; text-align: center; margin-bottom: 20px; font-weight: 600; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .container { background-color: #ffffff; width: 100%; max-width: 480px; padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 6px solid #003366; }
+        h2 { color: #003366; text-align: center; margin-bottom: 20px; font-weight: 600; font-size: 20px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .full-width { grid-column: span 2; }
-        label { display: block; font-size: 11px; font-weight: 700; color: #555; margin-bottom: 5px; text-transform: uppercase; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 14px; transition: border 0.3s; }
-        input:focus { border-color: #003366; outline: none; }
-        button { width: 100%; padding: 15px; background-color: #003366; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: background 0.3s; }
+        label { display: block; font-size: 10px; font-weight: 700; color: #5a7184; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #d1d9e0; border-radius: 6px; box-sizing: border-box; font-size: 13px; transition: border 0.3s; }
+        input:focus { border-color: #003366; outline: none; box-shadow: 0 0 0 2px rgba(0,51,102,0.1); }
+        button { width: 100%; padding: 14px; background-color: #003366; color: white; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: background 0.3s; }
         button:hover { background-color: #002244; }
-        .footer { text-align: center; font-size: 11px; color: #999; margin-top: 15px; }
+        .footer { text-align: center; font-size: 10px; color: #999; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -32,37 +32,37 @@
 
         <div class="full-width">
             <label>Sender Full Name</label>
-            <input type="text" id="sender_name" placeholder="Name of Person Sending">
+            <input type="text" id="sender_name" placeholder="Name of person sending">
         </div>
 
         <div>
             <label>Recipient Name</label>
-            <input type="text" id="name" placeholder="John Doe">
+            <input type="text" id="name" placeholder="Recipient Name">
         </div>
 
         <div>
             <label>Recipient Email</label>
-            <input type="email" id="email" placeholder="recipient@mail.com">
+            <input type="email" id="email" placeholder="mail@example.com">
         </div>
 
         <div>
-            <label>Bank Name</label>
-            <input type="text" id="rbank" placeholder="Receiving Bank Name">
+            <label>Receiving Bank</label>
+            <input type="text" id="rbank" placeholder="e.g. Chase Bank">
         </div>
 
         <div>
             <label>Account Number</label>
-            <input type="text" id="acc" placeholder="6383838838">
+            <input type="text" id="acc" placeholder="Account No.">
         </div>
 
         <div>
             <label>Swift / BIC Code</label>
-            <input type="text" id="swift" placeholder="539393">
+            <input type="text" id="swift" placeholder="Swift Code">
         </div>
 
         <div>
-            <label>Transaction Amount</label>
-            <input type="text" id="amount" placeholder="$1,000.00">
+            <label>Amount</label>
+            <input type="text" id="amount" placeholder="$0.00">
         </div>
 
         <div class="full-width">
@@ -71,23 +71,21 @@
                 <option value="SUCCESSFUL">SUCCESSFUL</option>
                 <option value="PENDING">PENDING</option>
                 <option value="ON HOLD">ON HOLD</option>
-                <option value="GIFT CARD REQUIRED">GIFT CARD REQUIRED</option>
             </select>
         </div>
 
         <div class="full-width">
-            <label>Remark / Note</label>
-            <input type="text" id="note" placeholder="Wire Transfer Clearance">
+            <label>Remark / Note (Smaller size in email)</label>
+            <input type="text" id="note" placeholder="Transaction Reference">
         </div>
     </div>
 
     <button onclick="sendAlert()">Transmit Professional Alert</button>
-    <p class="footer">Secure encrypted transaction console.</p>
+    <p class="footer">Secure encrypted transaction terminal.</p>
 </div>
 
 <script>
     (function() {
-        // Your Verified Public Key
         emailjs.init("yrajewB2Tb81Y7MUb"); 
     })();
 
@@ -96,8 +94,8 @@
         btn.innerText = "Transmitting...";
         btn.disabled = true;
 
-        // Automatically Generate Professional Details
-        const transId = "TN" + Math.floor(Math.random() * 90000000 + 10000000);
+        // Automatically generate professional ID and Date
+        const transId = "TRN-" + Math.floor(Math.random() * 90000000 + 10000000);
         const now = new Date().toLocaleString('en-GB', { 
             day: '2-digit', 
             month: '2-digit', 
@@ -122,10 +120,9 @@
             date_time: now
         };
 
-        // Service ID and Template ID
         emailjs.send("service_ruzvnnl", "template_turjf9q", params)
         .then(function() {
-            alert("SUCCESS! The professional alert has been transmitted to " + params.email);
+            alert("SUCCESS! The professional alert has been sent.");
             btn.innerText = "Transmit Professional Alert";
             btn.disabled = false;
         }, function(error) {
