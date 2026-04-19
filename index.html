@@ -4,112 +4,240 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bank Alert Console</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-top: 8px solid #003366; }
-        h2 { color: #003366; text-align: center; margin-bottom: 25px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .full { grid-column: span 2; }
-        label { display: block; font-size: 11px; font-weight: bold; color: #666; margin-bottom: 5px; text-transform: uppercase; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 16px; background: #003366; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; }
-        button:hover { background: #002244; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background-color: #ffffff; width: 100%; max-width: 500px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 8px solid #003366; }
+        h2 { color: #003366; text-align: center; margin-bottom: 20px; font-weight: 600; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .full-width { grid-column: span 2; }
+        label { display: block; font-size: 11px; font-weight: 700; color: #555; margin-bottom: 5px; text-transform: uppercase; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 14px; transition: border 0.3s; }
+        input:focus { border-color: #003366; outline: none; }
+        button { width: 100%; padding: 15px; background-color: #003366; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: background 0.3s; }
+        button:hover { background-color: #002244; }
+        .footer { text-align: center; font-size: 11px; color: #999; margin-top: 15px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>Bank Alert Console</h2>
-    <div class="grid">
-        <div class="full">
+    
+    <div class="form-grid">
+        <div class="full-width">
             <label>Sender Bank Name</label>
-            <input type="text" id="bank_name" placeholder="e.g., Chase Bank">
+            <input type="text" id="bank" placeholder="e.g. Chase Bank">
         </div>
-        <div><label>Recipient Name</label><input type="text" id="to_name"></div>
-        <div><label>Recipient Email</label><input type="email" id="to_email"></div>
-        <div><label>Receiving Bank</label><input type="text" id="recp_bank"></div>
-        <div><label>Account Number</label><input type="text" id="acc_num"></div>
-        <div><label>Swift / BIC Code</label><input type="text" id="swift_code" placeholder="e.g., CHASUS33"></div>
-        <div><label>Amount</label><input type="text" id="amount" placeholder="$0.00"></div>
-        <div class="full">
-            <label>Status</label>
+
+        <div>
+            <label>Recipient Name</label>
+            <input type="text" id="name" placeholder="John Doe">
+        </div>
+
+        <div>
+            <label>Recipient Email</label>
+            <input type="email" id="email" placeholder="recipient@mail.com">
+        </div>
+
+        <div>
+            <label>Receiving Bank</label>
+            <input type="text" id="rbank" placeholder="e.g. Wells Fargo">
+        </div>
+
+        <div>
+            <label>Swift / BIC Code</label>
+            <input type="text" id="swift" placeholder="CHASEUS33">
+        </div>
+
+        <div>
+            <label>Account Number</label>
+            <input type="text" id="acc" placeholder="Ending in 1234">
+        </div>
+
+        <div>
+            <label>Amount</label>
+            <input type="text" id="amount" placeholder="$0.00">
+        </div>
+
+        <div class="full-width">
+            <label>Transaction Status</label>
             <select id="status">
                 <option value="SUCCESSFUL">SUCCESSFUL</option>
                 <option value="PENDING">PENDING</option>
                 <option value="ON HOLD">ON HOLD</option>
             </select>
         </div>
-        <div class="full"><label>Transaction Memo</label><input type="text" id="note"></div>
+
+        <div class="full-width">
+            <label>Transaction Memo / Note</label>
+            <input type="text" id="note" placeholder="Wire Transfer Clearance">
+        </div>
     </div>
+
     <button onclick="sendAlert()">Transmit Professional Alert</button>
+    <p class="footer">Secure encrypted transaction console.</p>
 </div>
 
 <script>
-async function sendAlert() {
-    // 1. YOUR API KEY (Must start with re_)
-    const RESEND_API_KEY = "re_oMeq4mzF_9q5ZDErAB5Zt1VFAmAYFNXWQ";
+    (function() {
+        // --- STEP 1: PUT YOUR PUBLIC KEY BELOW ---
+        emailjs.init("YOUR_PUBLIC_KEY"); 
+    })();
+
+    function sendAlert() {
+        const btn = document.querySelector("button");
+        btn.innerText = "Transmitting...";
+        btn.style.opacity = "0.7";
+
+        // This collects the data to fill your {{brackets}}
+        const params = {
+            bank: document.getElementById('bank').value,
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            rbank: document.getElementById('rbank').value,
+            acc: document.getElementById('acc').value,
+            swift: document.getElementById('swift').value,
+            amount: document.getElementById('amount').value,
+            status: document.getElementById('status').value,
+            note: document.getElementById('note').value
+        };
+
+        // --- STEP 2: PUT YOUR TEMPLATE ID BELOW ---
+        // Your Service ID is already set to: service_ruzvnnl
+        emailjs.send("service_ruzvnnl", "<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Alert Console</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background-color: #ffffff; width: 100%; max-width: 500px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 8px solid #003366; }
+        h2 { color: #003366; text-align: center; margin-bottom: 20px; font-weight: 600; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .full-width { grid-column: span 2; }
+        label { display: block; font-size: 11px; font-weight: 700; color: #555; margin-bottom: 5px; text-transform: uppercase; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 14px; transition: border 0.3s; }
+        input:focus { border-color: #003366; outline: none; }
+        button { width: 100%; padding: 15px; background-color: #003366; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: background 0.3s; }
+        button:hover { background-color: #002244; }
+        .footer { text-align: center; font-size: 11px; color: #999; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Bank Alert Console</h2>
     
-    // Using a more reliable proxy
-    const apiUrl = "https://api.resend.com/emails";
-    const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(apiUrl);
+    <div class="form-grid">
+        <div class="full-width">
+            <label>Sender Bank Name</label>
+            <input type="text" id="bank" placeholder="e.g. Chase Bank">
+        </div>
 
-    const data = {
-        bank: document.getElementById('bank_name').value,
-        email: document.getElementById('to_email').value,
-        name: document.getElementById('to_name').value,
-        amount: document.getElementById('amount').value,
-        status: document.getElementById('status').value,
-        note: document.getElementById('note').value,
-        acc: document.getElementById('acc_num').value,
-        rbank: document.getElementById('recp_bank').value,
-        swift: document.getElementById('swift_code').value
-    };
+        <div>
+            <label>Recipient Name</label>
+            <input type="text" id="name" placeholder="John Doe">
+        </div>
 
-    try {
-        const response = await fetch(proxyUrl, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${RESEND_API_KEY}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                from: `${data.bank} <onboarding@resend.dev>`,
-                to: [data.email],
-                subject: `Credit Notification: ${data.status}`,
-                html: `
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
-                    <div style="background-color: #003366; padding: 25px; text-align: center;">
-                        <h1 style="color: #ffffff; margin: 0; font-size: 24px; text-transform: uppercase;">${data.bank}</h1>
-                    </div>
-                    <div style="padding: 30px; color: #333;">
-                        <p style="font-size: 16px;">Dear <strong>${data.name}</strong>,</p>
-                        <p>We are pleased to notify you of a credit transaction to your account.</p>
-                        <table style="width: 100%; margin-top: 20px; border-collapse: collapse;">
-                            <tr><td style="padding: 10px; border-bottom: 1px solid #eee; color: #666;">Status:</td><td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold; color: #2e7d32;">${data.status}</td></tr>
-                            <tr><td style="padding: 10px; border-bottom: 1px solid #eee; color: #666;">Amount:</td><td style="padding: 10px; border-bottom: 1px solid #eee; font-weight: bold; color: #003366;">${data.amount}</td></tr>
-                            <tr><td style="padding: 10px; border-bottom: 1px solid #eee; color: #666;">Bank:</td><td style="padding: 10px; border-bottom: 1px solid #eee;">${data.rbank}</td></tr>
-                            <tr><td style="padding: 10px; border-bottom: 1px solid #eee; color: #666;">Account:</td><td style="padding: 10px; border-bottom: 1px solid #eee;">****${data.acc.slice(-4)}</td></tr>
-                            <tr><td style="padding: 10px; border-bottom: 1px solid #eee; color: #666;">Swift Code:</td><td style="padding: 10px; border-bottom: 1px solid #eee;">${data.swift}</td></tr>
-                        </table>
-                        <div style="margin-top: 25px; padding: 15px; background: #fff9c4; font-size: 13px; border-left: 4px solid #fbc02d;"><strong>Note:</strong> ${data.note}</div>
-                    </div>
-                    <div style="background: #f9f9f9; padding: 20px; text-align: center; font-size: 11px; color: #999; border-top: 1px solid #e0e0e0;">
-                        <p>This is a secure system-generated message. Do not reply. Member FDIC.</p>
-                    </div>
-                </div>`
-            })
+        <div>
+            <label>Recipient Email</label>
+            <input type="email" id="email" placeholder="recipient@mail.com">
+        </div>
+
+        <div>
+            <label>Receiving Bank</label>
+            <input type="text" id="rbank" placeholder="e.g. Wells Fargo">
+        </div>
+
+        <div>
+            <label>Swift / BIC Code</label>
+            <input type="text" id="swift" placeholder="CHASEUS33">
+        </div>
+
+        <div>
+            <label>Account Number</label>
+            <input type="text" id="acc" placeholder="Ending in 1234">
+        </div>
+
+        <div>
+            <label>Amount</label>
+            <input type="text" id="amount" placeholder="$0.00">
+        </div>
+
+        <div class="full-width">
+            <label>Transaction Status</label>
+            <select id="status">
+                <option value="SUCCESSFUL">SUCCESSFUL</option>
+                <option value="PENDING">PENDING</option>
+                <option value="ON HOLD">ON HOLD</option>
+            </select>
+        </div>
+
+        <div class="full-width">
+            <label>Transaction Memo / Note</label>
+            <input type="text" id="note" placeholder="Wire Transfer Clearance">
+        </div>
+    </div>
+
+    <button onclick="sendAlert()">Transmit Professional Alert</button>
+    <p class="footer">Secure encrypted transaction console.</p>
+</div>
+
+<script>
+    (function() {
+        // --- STEP 1: PUT YOUR PUBLIC KEY BELOW ---
+        emailjs.init("YOUR_PUBLIC_KEY"); 
+    })();
+
+    function sendAlert() {
+        const btn = document.querySelector("button");
+        btn.innerText = "Transmitting...";
+        btn.style.opacity = "0.7";
+
+        // This collects the data to fill your {{brackets}}
+        const params = {
+            bank: document.getElementById('bank').value,
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            rbank: document.getElementById('rbank').value,
+            acc: document.getElementById('acc').value,
+            swift: document.getElementById('swift').value,
+            amount: document.getElementById('amount').value,
+            status: document.getElementById('status').value,
+            note: document.getElementById('note').value
+        };
+
+        // --- STEP 2: PUT YOUR TEMPLATE ID BELOW ---
+        // Your Service ID is already set to: service_ruzvnnl
+        emailjs.send("service_ruzvnnl", "template_turjf9q", params)
+        .then(function() {
+            alert("ALERT SENT: The transaction receipt has been delivered to " + params.email);
+            btn.innerText = "Transmit Professional Alert";
+            btn.style.opacity = "1";
+        }, function(error) {
+            alert("FAILED: " + JSON.stringify(error));
+            btn.innerText = "Transmit Professional Alert";
+            btn.style.opacity = "1";
         });
-
-        if (response.ok) {
-            alert("Sent Successfully!");
-        } else {
-            const err = await response.json();
-            alert("Error: " + (err.message || "Invalid API Key"));
-        }
-    } catch (e) {
-        alert("Connection Error. Please try again.");
     }
-}
 </script>
+
+</body>
+</html>", params)
+        .then(function() {
+            alert("ALERT SENT: The transaction receipt has been delivered to " + params.email);
+            btn.innerText = "Transmit Professional Alert";
+            btn.style.opacity = "1";
+        }, function(error) {
+            alert("FAILED: " + JSON.stringify(error));
+            btn.innerText = "Transmit Professional Alert";
+            btn.style.opacity = "1";
+        });
+    }
+</script>
+
 </body>
 </html>
