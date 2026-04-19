@@ -6,7 +6,7 @@
     <title>Bank Alert Console</title>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
         .container { background-color: #ffffff; width: 100%; max-width: 500px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 8px solid #003366; }
         h2 { color: #003366; text-align: center; margin-bottom: 20px; font-weight: 600; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
@@ -81,14 +81,13 @@
 
 <script>
     (function() {
-        // Initializing with your Public Key
         emailjs.init("yrajewB2Tb81Y7MUb"); 
     })();
 
     function sendAlert() {
         const btn = document.querySelector("button");
         btn.innerText = "Transmitting...";
-        btn.style.opacity = "0.7";
+        btn.disabled = true;
 
         const params = {
             bank: document.getElementById('bank').value,
@@ -102,16 +101,15 @@
             note: document.getElementById('note').value
         };
 
-        // Service ID: service_ruzvnnl | Template ID: template_turjf9q
         emailjs.send("service_ruzvnnl", "template_turjf9q", params)
         .then(function() {
-            alert("ALERT SENT: The transaction receipt has been delivered to " + params.email);
+            alert("SUCCESS! Alert sent to " + params.email);
             btn.innerText = "Transmit Professional Alert";
-            btn.style.opacity = "1";
+            btn.disabled = false;
         }, function(error) {
-            alert("FAILED: " + JSON.stringify(error));
+            alert("ERROR: Please make sure your EmailJS template is SAVED. Details: " + JSON.stringify(error));
             btn.innerText = "Transmit Professional Alert";
-            btn.style.opacity = "1";
+            btn.disabled = false;
         });
     }
 </script>
