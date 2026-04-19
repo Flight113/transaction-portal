@@ -11,49 +11,61 @@
         h2 { color: #003366; text-align: center; margin-bottom: 20px; font-weight: 600; font-size: 20px; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .full-width { grid-column: span 2; }
-        label { display: block; font-size: 10px; font-weight: 700; color: #5a7184; margin-bottom: 4px; text-transform: uppercase; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #d1d9e0; border-radius: 6px; box-sizing: border-box; font-size: 13px; }
-        button { width: 100%; padding: 14px; background-color: #003366; color: white; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        label { display: block; font-size: 10px; font-weight: 700; color: #5a7184; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #d1d9e0; border-radius: 6px; box-sizing: border-box; font-size: 13px; transition: border 0.3s; }
+        input:focus { border-color: #003366; outline: none; box-shadow: 0 0 0 2px rgba(0,51,102,0.1); }
+        button { width: 100%; padding: 14px; background-color: #003366; color: white; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: background 0.3s; }
+        button:hover { background-color: #002244; }
         button:disabled { background-color: #cccccc; cursor: not-allowed; }
+        .footer { text-align: center; font-size: 10px; color: #999; margin-top: 15px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>🏛️ Bank Alert Console</h2>
+    
     <div class="form-grid">
         <div class="full-width">
             <label>Sender Bank Name</label>
-            <input type="text" id="bank" value="Trust Net Bank">
+            <input type="text" id="bank" placeholder="e.g. Trust Net Bank">
         </div>
+
         <div class="full-width">
             <label>Sender Full Name</label>
-            <input type="text" id="sender_name" placeholder="Who is sending?">
+            <input type="text" id="sender_name" placeholder="Name of person sending">
         </div>
+
         <div>
             <label>Recipient Name</label>
-            <input type="text" id="name" placeholder="John Doe">
+            <input type="text" id="name" placeholder="Recipient Name">
         </div>
+
         <div>
             <label>Recipient Email</label>
             <input type="email" id="email" placeholder="mail@example.com">
         </div>
+
         <div>
             <label>Receiving Bank Name</label>
             <input type="text" id="rbank" placeholder="e.g. Chase Bank">
         </div>
+
         <div>
             <label>Account Number</label>
-            <input type="text" id="acc" placeholder="****1234">
+            <input type="text" id="acc" placeholder="Account No.">
         </div>
+
         <div>
             <label>Swift / BIC Code</label>
-            <input type="text" id="swift" placeholder="SWIFT123">
+            <input type="text" id="swift" placeholder="Swift Code">
         </div>
+
         <div>
-            <label>Amount</label>
-            <input type="text" id="amount" placeholder="$10,000.00">
+            <label>Transaction Amount</label>
+            <input type="text" id="amount" placeholder="$0.00">
         </div>
+
         <div class="full-width">
             <label>Transaction Status</label>
             <select id="status">
@@ -62,12 +74,15 @@
                 <option value="ON HOLD">ON HOLD</option>
             </select>
         </div>
+
         <div class="full-width">
             <label>Remark / Note</label>
-            <input type="text" id="note" placeholder="Wire Transfer">
+            <input type="text" id="note" placeholder="Transaction Reference">
         </div>
     </div>
-    <button id="sendBtn" onclick="sendAlert()">Transmit Professional Alert</button>
+
+    <button id="mainBtn" onclick="sendAlert()">Transmit Professional Alert</button>
+    <p class="footer">Secure encrypted transaction terminal.</p>
 </div>
 
 <script>
@@ -76,12 +91,23 @@
     })();
 
     function sendAlert() {
-        const btn = document.getElementById("sendBtn");
+        const btn = document.getElementById("mainBtn");
+        
+        // Check if button exists before modifying
+        if (!btn) return;
+
         btn.innerText = "Transmitting...";
         btn.disabled = true;
 
+        // Automatically generate professional ID and Date
         const transId = "TRN-" + Math.floor(Math.random() * 90000000 + 10000000);
-        const now = new Date().toLocaleString('en-GB');
+        const now = new Date().toLocaleString('en-GB', { 
+            day: '2-digit', 
+            month: '2-digit', 
+            year: 'numeric', 
+            hour: '2-digit', 
+            minute: '2-digit'
+        });
 
         const params = {
             bank: document.getElementById('bank').value,
@@ -100,7 +126,7 @@
 
         emailjs.send("service_ruzvnnl", "template_turjf9q", params)
         .then(function() {
-            alert("SUCCESS! Alert sent.");
+            alert("SUCCESS! Alert transmitted.");
             btn.innerText = "Transmit Professional Alert";
             btn.disabled = false;
         })
@@ -111,5 +137,6 @@
         });
     }
 </script>
+
 </body>
 </html>
