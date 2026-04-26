@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Asset Transmission Console</title>
+    <title>Asset Transmission Console</title>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0b1120; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; color: #fff; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #0b1120; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; color: #fff; }
         .container { background-color: #ffffff; width: 100%; max-width: 550px; padding: 25px; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); color: #333; border-top: 10px solid #0052ff; max-height: 95vh; overflow-y: auto; }
         h2 { color: #0052ff; text-align: center; margin-bottom: 15px; font-weight: 800; text-transform: uppercase; font-size: 20px; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -16,7 +16,6 @@
         input, select { width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; box-sizing: border-box; font-size: 14px; background-color: #f8fafc; color: #333; }
         .platform-header { background: #f1f5f9; padding: 12px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #0052ff; }
         button { width: 100%; padding: 16px; background-color: #0052ff; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; }
-        button:disabled { background-color: #cbd5e1; cursor: not-allowed; }
         .footer { text-align: center; font-size: 10px; color: #94a3b8; margin-top: 15px; }
     </style>
 </head>
@@ -35,27 +34,15 @@
                 <option value="Venmo">Venmo</option>
                 <option value="Zelle">Zelle</option>
                 <option value="ApplePay">Apple Pay</option>
-                <option value="GooglePay">Google Pay</option>
             </optgroup>
-            <optgroup label="US BANKS">
+            <optgroup label="BANKS">
                 <option value="Chase">Chase Bank</option>
                 <option value="BofA">Bank of America</option>
                 <option value="Wells">Wells Fargo</option>
-                <option value="Citi">Citibank</option>
-                <option value="CapitalOne">Capital One</option>
-                <option value="Chime">Chime</option>
-            </optgroup>
-            <optgroup label="INTERNATIONAL">
-                <option value="Wise">Wise</option>
-                <option value="Revolut">Revolut</option>
-                <option value="Monzo">Monzo</option>
-                <option value="Barclays">Barclays</option>
             </optgroup>
             <optgroup label="CRYPTOCURRENCY">
                 <option value="BTC">Bitcoin (BTC)</option>
-                <option value="ETH">Ethereum (ETH)</option>
                 <option value="USDT">Tether (USDT)</option>
-                <option value="BNB">Binance Coin (BNB)</option>
             </optgroup>
         </select>
     </div>
@@ -68,7 +55,7 @@
         </div>
         <div class="full-width">
             <label>Sender Full Name</label>
-            <input type="text" id="sender_name" placeholder="Name of Person/Entity Sending">
+            <input type="text" id="sender_name" placeholder="Name of Person Sending">
         </div>
 
         <div class="section-label">Recipient Setup</div>
@@ -86,75 +73,47 @@
                 <option value="SUCCESSFUL">✅ SUCCESSFUL</option>
                 <option value="PENDING">⏳ PENDING</option>
                 <option value="PROCESSING">⚙️ PROCESSING</option>
-                <option value="ON HOLD">⚠️ ON HOLD</option>
                 <option value="CANCELLED">❌ CANCELLED</option>
                 <option value="DELAYED">🕒 DELAYED</option>
             </select>
         </div>
         <div class="full-width">
             <label>Status Reason / Note</label>
-            <input type="text" id="note" placeholder="Reason for status update">
+            <input type="text" id="note" placeholder="Reason for status">
         </div>
     </div>
 
     <button id="mainBtn" onclick="sendAlert()">Authorize Transmission</button>
-    <p class="footer">TERMINAL ID: 8842-AX | SECURE SESSION ACTIVE</p>
+    <p class="footer">SYSTEM ID: 8842-AX | SECURE SESSION ACTIVE</p>
 </div>
 
 <script>
     (function() { emailjs.init("yrajewB2Tb81Y7MUb"); })();
 
+    const profiles = {
+        'PayPal': { bank: 'PayPal Holdings Inc.', swift: 'PAYPALUSA1', logo: 'https://i.imgur.com/89k6L3Y.png' },
+        'CashApp': { bank: 'CashApp / Block Inc.', swift: 'CASHAPPUSA', logo: 'https://i.imgur.com/G5qE7e1.png' },
+        'Zelle': { bank: 'Zelle Network Service', swift: 'ZELLE001', logo: 'https://i.imgur.com/R3Z5t7C.png' },
+        'Venmo': { bank: 'Venmo / PayPal', swift: 'VENMOUSA', logo: 'https://i.imgur.com/mO2X9vX.png' },
+        'ApplePay': { bank: 'Apple Pay Services', swift: 'APPLEUSA', logo: 'https://i.imgur.com/pZfA6Yn.png' },
+        'Chase': { bank: 'JPMorgan Chase & Co.', swift: 'CHASUS33', logo: 'https://i.imgur.com/2sM7m9H.png' },
+        'BofA': { bank: 'Bank of America N.A.', swift: 'BOFAUS3N', logo: 'https://i.imgur.com/UvYyM9l.png' },
+        'Wells': { bank: 'Wells Fargo & Co.', swift: 'WFCUS33', logo: 'https://i.imgur.com/V2zX6wE.png' },
+        'BTC': { bank: 'Bitcoin Network', swift: 'BLOCKCHAIN', logo: 'https://i.imgur.com/8vR4fV4.png' },
+        'USDT': { bank: 'Tether Treasury', swift: 'TRC-20', logo: 'https://i.imgur.com/S6MscT3.png' }
+    };
+
     function updateLayout() {
         const platform = document.getElementById('platformSelector').value;
-        const container = document.getElementById('mainContainer');
         const bankInput = document.getElementById('bank');
         const swiftInput = document.getElementById('swift');
         const rbankDiv = document.getElementById('rbank-div');
-        const bankLabel = document.getElementById('bankLabel');
-        const accLabel = document.getElementById('accLabel');
-        const swiftLabel = document.getElementById('swiftLabel');
-
-        const profiles = {
-            'PayPal': { bank: 'PayPal Holdings Inc.', swift: 'PAYPALUSA1', crypto: false },
-            'CashApp': { bank: 'CashApp / Block Inc.', swift: 'CASHAPPUSA', crypto: false },
-            'Zelle': { bank: 'Zelle Network Service', swift: 'ZELLE001', crypto: false },
-            'Venmo': { bank: 'Venmo / PayPal', swift: 'VENMOUSA', crypto: false },
-            'ApplePay': { bank: 'Apple Pay / Goldman Sachs', swift: 'APPLEUSA', crypto: false },
-            'GooglePay': { bank: 'Google Pay Service', swift: 'GPAYUSA', crypto: false },
-            'Chase': { bank: 'JPMorgan Chase & Co.', swift: 'CHASUS33', crypto: false },
-            'BofA': { bank: 'Bank of America N.A.', swift: 'BOFAUS3N', crypto: false },
-            'Wells': { bank: 'Wells Fargo & Co.', swift: 'WFCUS33', crypto: false },
-            'Citi': { bank: 'Citibank N.A.', swift: 'CITIUS33', crypto: false },
-            'CapitalOne': { bank: 'Capital One Financial', swift: 'CAPUS33', crypto: false },
-            'Chime': { bank: 'Chime Financial Inc.', swift: 'CHIMEUS1', crypto: false },
-            'Wise': { bank: 'Wise Payments Ltd.', swift: 'WISEUS33', crypto: false },
-            'Revolut': { bank: 'Revolut Ltd.', swift: 'REVOUS22', crypto: false },
-            'Monzo': { bank: 'Monzo Bank Ltd.', swift: 'MONZUS33', crypto: false },
-            'Barclays': { bank: 'Barclays Bank PLC', swift: 'BARCUS33', crypto: false },
-            'BTC': { bank: 'Bitcoin Network (BTC)', swift: 'BLOCKCHAIN', crypto: true },
-            'ETH': { bank: 'Ethereum Network (ERC-20)', swift: 'MAINNET', crypto: true },
-            'USDT': { bank: 'Tether Treasury (TRC-20)', swift: 'TRON-NETWORK', crypto: true },
-            'BNB': { bank: 'Binance Smart Chain (BEP-20)', swift: 'BSC-SCAN', crypto: true }
-        };
 
         if (profiles[platform]) {
             const data = profiles[platform];
             bankInput.value = data.bank;
             swiftInput.value = data.swift;
-
-            if (data.crypto) {
-                container.style.borderTopColor = "#f7931a";
-                bankLabel.innerText = "Blockchain Network";
-                accLabel.innerText = "Wallet Address";
-                swiftLabel.innerText = "Network Type";
-                rbankDiv.style.display = "none";
-            } else {
-                container.style.borderTopColor = "#0052ff";
-                bankLabel.innerText = "Institution Name";
-                accLabel.innerText = "Account Number";
-                swiftLabel.innerText = "Swift / Routing";
-                rbankDiv.style.display = "block";
-            }
+            rbankDiv.style.display = platform.includes('BTC') || platform.includes('USDT') ? "none" : "block";
         }
     }
 
@@ -167,18 +126,10 @@
         const transId = "TRN-" + Math.floor(Math.random() * 90000000 + 10000000);
         const now = new Date().toLocaleString('en-GB', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
 
-        // Logic for EmailJS Dynamic Styling
         let layoutColor = "bg-blue";
-        let accLabelText = "Account Number";
-        let swiftLabelText = "Swift / Routing";
-
-        if (["PayPal", "Venmo", "GooglePay"].includes(platform)) layoutColor = "bg-dark";
-        if (["Zelle", "CashApp", "Wise"].includes(platform)) layoutColor = "bg-green";
-        if (["BTC", "ETH", "USDT", "BNB"].includes(platform)) {
-            layoutColor = "bg-orange";
-            accLabelText = "Wallet Address";
-            swiftLabelText = "Network Type";
-        }
+        if (["PayPal", "Venmo"].includes(platform)) layoutColor = "bg-dark";
+        if (["Zelle", "CashApp"].includes(platform)) layoutColor = "bg-green";
+        if (["BTC", "USDT"].includes(platform)) layoutColor = "bg-orange";
 
         const params = {
             bank: document.getElementById('bank').value,
@@ -193,20 +144,15 @@
             note: document.getElementById('note').value,
             trans_id: transId,
             date_time: now,
-            // Variables for the Professional Email Template
             layout_color: layoutColor,
-            acc_label: accLabelText,
-            swift_label: swiftLabelText
+            acc_label: (platform.includes('BTC') || platform.includes('USDT')) ? "Wallet Address" : "Account Number",
+            swift_label: (platform.includes('BTC') || platform.includes('USDT')) ? "Network Type" : "Swift / Routing",
+            logo_url: profiles[platform].logo
         };
 
         emailjs.send("service_9h1jsnw", "template_turjf9q", params)
         .then(() => {
             alert("SUCCESS: Professional Receipt Dispatched.");
-            btn.innerText = "Authorize Transmission";
-            btn.disabled = false;
-        })
-        .catch((err) => {
-            alert("ERROR: Check Domain Authorization");
             btn.innerText = "Authorize Transmission";
             btn.disabled = false;
         });
