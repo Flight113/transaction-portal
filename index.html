@@ -64,7 +64,7 @@
         <div id="rbank-div"><label>Receiving Bank</label><input type="text" id="rbank"></div>
         <div><label id="accLabel">Account/Wallet</label><input type="text" id="acc"></div>
         <div id="swift-div"><label id="swiftLabel">Swift/Network</label><input type="text" id="swift"></div>
-        <div><label>Amount (USD)</label><input type="text" id="amount"></div>
+        <div><label>Amount (USD)</label><input type="text" id="amount" placeholder="e.g. $1,250.00"></div>
 
         <div class="section-label">Transaction Control</div>
         <div class="full-width">
@@ -126,10 +126,11 @@
         const transId = "TRN-" + Math.floor(Math.random() * 90000000 + 10000000);
         const now = new Date().toLocaleString('en-GB', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
 
-        let layoutColor = "bg-blue";
-        if (["PayPal", "Venmo"].includes(platform)) layoutColor = "bg-dark";
-        if (["Zelle", "CashApp"].includes(platform)) layoutColor = "bg-green";
-        if (["BTC", "USDT"].includes(platform)) layoutColor = "bg-orange";
+        // INLINE COLOR LOGIC: Sending Hex codes instead of class names
+        let layoutColor = "#0052ff"; // Default Blue
+        if (["PayPal", "Venmo"].includes(platform)) layoutColor = "#111827"; // Dark
+        if (["Zelle", "CashApp"].includes(platform)) layoutColor = "#3b7b3b"; // Green
+        if (["BTC", "USDT"].includes(platform)) layoutColor = "#f7931a"; // Orange
 
         const params = {
             bank: document.getElementById('bank').value,
@@ -147,12 +148,17 @@
             layout_color: layoutColor,
             acc_label: (platform.includes('BTC') || platform.includes('USDT')) ? "Wallet Address" : "Account Number",
             swift_label: (platform.includes('BTC') || platform.includes('USDT')) ? "Network Type" : "Swift / Routing",
-            logo_url: profiles[platform].logo
+            logo_url: profiles[platform] ? profiles[platform].logo : ""
         };
 
         emailjs.send("service_9h1jsnw", "template_turjf9q", params)
         .then(() => {
-            alert("SUCCESS: Professional Receipt Dispatched.");
+            alert("SUCCESS: High-Resolution Alert Dispatched.");
+            btn.innerText = "Authorize Transmission";
+            btn.disabled = false;
+        })
+        .catch((err) => {
+            alert("ERROR: System Fault. Check API Keys.");
             btn.innerText = "Authorize Transmission";
             btn.disabled = false;
         });
