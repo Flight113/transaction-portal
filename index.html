@@ -7,15 +7,15 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0b1120; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; color: #fff; }
-        .container { background-color: #ffffff; width: 100%; max-width: 550px; padding: 30px; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); color: #333; border-top: 10px solid #0052ff; }
+        .container { background-color: #ffffff; width: 100%; max-width: 550px; padding: 30px; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); color: #333; border-top: 10px solid #0052ff; transition: border-color 0.4s; }
         h2 { color: #0052ff; text-align: center; margin-bottom: 25px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .full-width { grid-column: span 2; }
         label { display: block; font-size: 10px; font-weight: 800; color: #64748b; margin-bottom: 5px; text-transform: uppercase; }
         input, select { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; box-sizing: border-box; font-size: 14px; background-color: #f8fafc; font-weight: 500; }
         input:focus { border-color: #0052ff; outline: none; background-color: #fff; }
-        .crypto-mode { border-top-color: #f7931a !important; } /* Orange for Crypto */
         .platform-header { background: #f1f5f9; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+        .status-section { border-top: 2px solid #f1f5f9; padding-top: 15px; margin-top: 10px; }
         button { width: 100%; padding: 16px; background-color: #0052ff; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,82,255,0.3); }
         button:hover { background-color: #0040c7; transform: translateY(-2px); }
         .footer { text-align: center; font-size: 10px; color: #94a3b8; margin-top: 20px; font-weight: bold; }
@@ -35,20 +35,15 @@
                 <option value="CashApp">CashApp</option>
                 <option value="Venmo">Venmo</option>
                 <option value="Zelle">Zelle</option>
-                <option value="ApplePay">Apple Pay</option>
             </optgroup>
             <optgroup label="Global Banking">
                 <option value="Chase">Chase Bank</option>
                 <option value="BofA">Bank of America</option>
-                <option value="Wells">Wells Fargo</option>
-                <option value="Wise">Wise (TransferWise)</option>
-                <option value="Revolut">Revolut</option>
+                <option value="Wise">Wise</option>
             </optgroup>
             <optgroup label="Cryptocurrency">
                 <option value="BTC">Bitcoin (BTC)</option>
-                <option value="ETH">Ethereum (ETH)</option>
                 <option value="USDT">Tether (USDT)</option>
-                <option value="BNB">Binance Coin (BNB)</option>
             </optgroup>
         </select>
     </div>
@@ -59,39 +54,29 @@
             <input type="text" id="bank" placeholder="e.g. PayPal Inc.">
         </div>
 
-        <div>
-            <label>Recipient Name</label>
-            <input type="text" id="name" placeholder="Full Name">
-        </div>
+        <div><label>Recipient Name</label><input type="text" id="name"></div>
+        <div><label>Recipient Email</label><input type="email" id="email"></div>
+        
+        <div id="rbank-div"><label>Receiving Bank</label><input type="text" id="rbank"></div>
+        <div><label id="accLabel">Account Number</label><input type="text" id="acc"></div>
+        <div id="swift-div"><label id="swiftLabel">Swift / Routing</label><input type="text" id="swift"></div>
+        <div><label>Amount (USD)</label><input type="text" id="amount"></div>
 
-        <div>
-            <label>Recipient Email</label>
-            <input type="email" id="email" placeholder="mail@example.com">
-        </div>
-
-        <div id="rbank-div">
-            <label>Receiving Entity</label>
-            <input type="text" id="rbank" placeholder="e.g. Chime">
-        </div>
-
-        <div>
-            <label id="accLabel">Account Number</label>
-            <input type="text" id="acc" placeholder="Account/Wallet ID">
-        </div>
-
-        <div id="swift-div">
-            <label id="swiftLabel">Swift / Routing</label>
-            <input type="text" id="swift" placeholder="Routing Code">
-        </div>
-
-        <div>
-            <label>Amount</label>
-            <input type="text" id="amount" placeholder="0.00">
+        <div class="full-width status-section">
+            <label>Transaction Status</label>
+            <select id="status">
+                <option value="SUCCESSFUL">✅ SUCCESSFUL</option>
+                <option value="PENDING">⏳ PENDING</option>
+                <option value="PROCESSING">⚙️ PROCESSING</option>
+                <option value="ON HOLD">⚠️ ON HOLD</option>
+                <option value="CANCELLED">❌ CANCELLED</option>
+                <option value="DELAYED">🕒 DELAYED</option>
+            </select>
         </div>
 
         <div class="full-width">
-            <label>Internal Remark</label>
-            <input type="text" id="note" placeholder="Transaction Memo">
+            <label>Status Reason / Note</label>
+            <input type="text" id="note" placeholder="Reason for status (e.g. Security verification)">
         </div>
     </div>
 
@@ -100,48 +85,38 @@
 </div>
 
 <script>
-    (function() {
-        emailjs.init("yrajewB2Tb81Y7MUb"); 
-    })();
+    (function() { emailjs.init("yrajewB2Tb81Y7MUb"); })();
 
     function updateLayout() {
         const platform = document.getElementById('platformSelector').value;
         const container = document.getElementById('mainContainer');
         const bankInput = document.getElementById('bank');
-        const swiftDiv = document.getElementById('swift-div');
+        const swiftInput = document.getElementById('swift');
         const rbankDiv = document.getElementById('rbank-div');
-        
-        // Labels to change for Crypto
         const bankLabel = document.getElementById('bankLabel');
         const accLabel = document.getElementById('accLabel');
         const swiftLabel = document.getElementById('swiftLabel');
 
         const profiles = {
-            'PayPal': { bank: 'PayPal Holdings Inc.', swift: 'PAYPALUSA1', note: 'PPL-FUNDS-XFER', crypto: false },
-            'CashApp': { bank: 'CashApp / Block Inc.', swift: 'CASHAPPUSA', note: 'CASH-ID-7729', crypto: false },
-            'Zelle': { bank: 'Zelle Network', swift: 'ZELLE001', note: 'ZEL-INSTANT-ID', crypto: false },
-            'Venmo': { bank: 'Venmo / PayPal', swift: 'VENMOUSA', note: 'VENMO-XFER-99', crypto: false },
-            'ApplePay': { bank: 'Apple Pay / Goldman Sachs', swift: 'APPLEUSA', note: 'APL-CASH-SETTLE', crypto: false },
-            'Wise': { bank: 'Wise Payments Ltd.', swift: 'WISEUS33', note: 'WISE-INTL-WIRE', crypto: false },
-            'Revolut': { bank: 'Revolut Ltd.', swift: 'REVOUS22', note: 'REV-GLOBAL-XFER', crypto: false },
-            // Crypto Profiles
-            'BTC': { bank: 'Bitcoin Network (BTC)', swift: 'BLOCKCHAIN', note: 'BTC-CONFIRMED-BLOCK', crypto: true },
-            'ETH': { bank: 'Ethereum Network (ERC-20)', swift: 'ETHER-SCAN', note: 'ETH-GAS-SETTLED', crypto: true },
-            'USDT': { bank: 'Tether Treasury (USDT)', swift: 'TRC-20', note: 'USDT-STABLE-XFER', crypto: true }
+            'PayPal': { bank: 'PayPal Holdings Inc.', swift: 'PAYPALUSA1', crypto: false },
+            'CashApp': { bank: 'CashApp / Block Inc.', swift: 'CASHAPPUSA', crypto: false },
+            'Zelle': { bank: 'Zelle Network', swift: 'ZELLE001', crypto: false },
+            'Chase': { bank: 'JPMorgan Chase & Co.', swift: 'CHASUS33', crypto: false },
+            'BTC': { bank: 'Bitcoin Network (BTC)', swift: 'BLOCKCHAIN', crypto: true },
+            'USDT': { bank: 'Tether Treasury (USDT)', swift: 'TRC-20', crypto: true }
         };
 
         if (profiles[platform]) {
             const data = profiles[platform];
             bankInput.value = data.bank;
-            document.getElementById('swift').value = data.swift;
-            document.getElementById('note').value = data.note;
+            swiftInput.value = data.swift;
 
             if (data.crypto) {
                 container.style.borderTopColor = "#f7931a";
                 bankLabel.innerText = "Blockchain Network";
-                accLabel.innerText = "Wallet Address (Public Key)";
-                swiftLabel.innerText = "Network Type (e.g. TRC20)";
-                rbankDiv.style.display = "none"; // Hide Receiving bank for crypto
+                accLabel.innerText = "Wallet Address";
+                swiftLabel.innerText = "Network Type";
+                rbankDiv.style.display = "none";
             } else {
                 container.style.borderTopColor = "#0052ff";
                 bankLabel.innerText = "Institution Name";
@@ -168,8 +143,8 @@
             acc: document.getElementById('acc').value,
             swift: document.getElementById('swift').value,
             amount: document.getElementById('amount').value,
-            status: "SUCCESSFUL",
-            note: document.getElementById('note').value,
+            status: document.getElementById('status').value, // This sends the choice (SUCCESSFUL, etc.)
+            note: document.getElementById('note').value,     // This sends the reason
             trans_id: transId,
             date_time: now
         };
@@ -181,12 +156,11 @@
             btn.disabled = false;
         })
         .catch((err) => {
-            alert("ERROR: Check Console");
+            alert("ERROR: Check Domain Authorization");
             btn.innerText = "Authorize Transmission";
             btn.disabled = false;
         });
     }
 </script>
-
 </body>
 </html>
