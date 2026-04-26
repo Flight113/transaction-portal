@@ -7,15 +7,15 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0b1120; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; color: #fff; }
-        .container { background-color: #ffffff; width: 100%; max-width: 550px; padding: 30px; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); color: #333; border-top: 10px solid #0052ff; max-height: 90vh; overflow-y: auto; }
-        h2 { color: #0052ff; text-align: center; margin-bottom: 20px; font-weight: 800; text-transform: uppercase; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .container { background-color: #ffffff; width: 100%; max-width: 550px; padding: 25px; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); color: #333; border-top: 10px solid #0052ff; max-height: 95vh; overflow-y: auto; }
+        h2 { color: #0052ff; text-align: center; margin-bottom: 15px; font-weight: 800; text-transform: uppercase; font-size: 20px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .full-width { grid-column: span 2; }
-        .section-label { grid-column: span 2; font-size: 11px; font-weight: 900; color: #0052ff; border-bottom: 1px solid #e2e8f0; margin: 10px 0 5px 0; padding-bottom: 3px; text-transform: uppercase; }
-        label { display: block; font-size: 10px; font-weight: 800; color: #64748b; margin-bottom: 4px; text-transform: uppercase; }
+        .section-label { grid-column: span 2; font-size: 11px; font-weight: 900; color: #0052ff; border-bottom: 1px solid #e2e8f0; margin-top: 15px; padding-bottom: 3px; text-transform: uppercase; }
+        label { display: block; font-size: 10px; font-weight: 800; color: #64748b; margin-bottom: 3px; text-transform: uppercase; }
         input, select { width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; box-sizing: border-box; font-size: 14px; background-color: #f8fafc; color: #333; }
-        .platform-header { background: #f1f5f9; padding: 12px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #e2e8f0; }
-        button { width: 100%; padding: 16px; background-color: #0052ff; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 12px rgba(0,82,255,0.3); }
+        .platform-header { background: #f1f5f9; padding: 12px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #e2e8f0; }
+        button { width: 100%; padding: 16px; background-color: #0052ff; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; }
         .footer { text-align: center; font-size: 10px; color: #94a3b8; margin-top: 15px; }
     </style>
 </head>
@@ -27,11 +27,20 @@
     <div class="platform-header">
         <label>Transmission Protocol</label>
         <select id="platformSelector" onchange="updateLayout()">
-            <option value="">-- Select Platform --</option>
-            <optgroup label="Wallets/Apps">
+            <option value="">-- Choose Platform --</option>
+            <optgroup label="Apps & Wallets">
                 <option value="PayPal">PayPal</option>
                 <option value="CashApp">CashApp</option>
                 <option value="Zelle">Zelle</option>
+                <option value="Venmo">Venmo</option>
+                <option value="ApplePay">Apple Pay</option>
+            </optgroup>
+            <optgroup label="Banking Institutions">
+                <option value="Chase">Chase Bank</option>
+                <option value="BofA">Bank of America</option>
+                <option value="Wells">Wells Fargo</option>
+                <option value="Wise">Wise</option>
+                <option value="Revolut">Revolut</option>
             </optgroup>
             <optgroup label="Cryptocurrency">
                 <option value="BTC">Bitcoin (BTC)</option>
@@ -41,17 +50,17 @@
     </div>
 
     <div class="form-grid">
-        <div class="section-label">Sender Details</div>
+        <div class="section-label">Sender Setup</div>
         <div class="full-width">
-            <label id="bankLabel">Sender Institution (Bank/App)</label>
-            <input type="text" id="bank" placeholder="e.g. PayPal Inc.">
+            <label id="bankLabel">Sender Institution</label>
+            <input type="text" id="bank" placeholder="Institution Name">
         </div>
         <div class="full-width">
             <label>Sender Full Name</label>
-            <input type="text" id="sender_name" placeholder="Name of person sending">
+            <input type="text" id="sender_name" placeholder="Name of Person/Entity Sending">
         </div>
 
-        <div class="section-label">Recipient Details</div>
+        <div class="section-label">Recipient Setup</div>
         <div><label>Recipient Name</label><input type="text" id="name"></div>
         <div><label>Recipient Email</label><input type="email" id="email"></div>
         <div id="rbank-div"><label>Receiving Bank</label><input type="text" id="rbank"></div>
@@ -73,12 +82,12 @@
         </div>
         <div class="full-width">
             <label>Status Reason / Note</label>
-            <input type="text" id="note" placeholder="e.g. Awaiting verification">
+            <input type="text" id="note" placeholder="Reason for status update">
         </div>
     </div>
 
     <button id="mainBtn" onclick="sendAlert()">Authorize Transmission</button>
-    <p class="footer">ENCRYPTION: AES-256 | TERMINAL ACTIVE</p>
+    <p class="footer">TERMINAL ID: 8842-AX | SECURE SESSION ACTIVE</p>
 </div>
 
 <script>
@@ -97,7 +106,14 @@
         const profiles = {
             'PayPal': { bank: 'PayPal Holdings Inc.', swift: 'PAYPALUSA1', crypto: false },
             'CashApp': { bank: 'CashApp / Block Inc.', swift: 'CASHAPPUSA', crypto: false },
-            'Zelle': { bank: 'Zelle Network', swift: 'ZELLE001', crypto: false },
+            'Zelle': { bank: 'Zelle Network Service', swift: 'ZELLE001', crypto: false },
+            'Venmo': { bank: 'Venmo / PayPal', swift: 'VENMOUSA', crypto: false },
+            'ApplePay': { bank: 'Apple Pay / Goldman Sachs', swift: 'APPLEUSA', crypto: false },
+            'Chase': { bank: 'JPMorgan Chase & Co.', swift: 'CHASUS33', crypto: false },
+            'BofA': { bank: 'Bank of America N.A.', swift: 'BOFAUS3N', crypto: false },
+            'Wells': { bank: 'Wells Fargo & Co.', swift: 'WFCUS33', crypto: false },
+            'Wise': { bank: 'Wise Payments Ltd.', swift: 'WISEUS33', crypto: false },
+            'Revolut': { bank: 'Revolut Ltd.', swift: 'REVOUS22', crypto: false },
             'BTC': { bank: 'Bitcoin Network (BTC)', swift: 'BLOCKCHAIN', crypto: true },
             'USDT': { bank: 'Tether Treasury (USDT)', swift: 'TRC-20', crypto: true }
         };
