@@ -3,163 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asset Transmission Console</title>
+    <title>Official Bank Dispatch Terminal</title>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #0b1120; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; color: #fff; }
-        .container { background-color: #ffffff; width: 100%; max-width: 550px; padding: 25px; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); color: #333; border-top: 10px solid #0f172a; max-height: 95vh; overflow-y: auto; }
-        h2 { color: #0f172a; text-align: center; margin-bottom: 15px; font-weight: 800; text-transform: uppercase; font-size: 20px; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .full-width { grid-column: span 2; }
-        .section-label { grid-column: span 2; font-size: 11px; font-weight: 900; color: #0f172a; border-bottom: 1px solid #e2e8f0; margin-top: 15px; padding-bottom: 3px; text-transform: uppercase; }
-        label { display: block; font-size: 10px; font-weight: 800; color: #64748b; margin-bottom: 3px; text-transform: uppercase; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; box-sizing: border-box; font-size: 14px; background-color: #f8fafc; color: #333; }
-        .platform-header { background: #f1f5f9; padding: 12px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #0f172a; }
-        button { width: 100%; padding: 16px; background-color: #0f172a; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; }
-        .footer { text-align: center; font-size: 10px; color: #94a3b8; margin-top: 15px; }
+        body { font-family: 'Arial', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .container { background-color: #ffffff; width: 100%; max-width: 480px; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 8px solid #003366; }
+        .header { background-color: #003366; color: white; padding: 25px; text-align: center; }
+        .header h2 { margin: 0; font-size: 18px; text-transform: uppercase; letter-spacing: 2px; font-weight: 900; }
+        .form-body { padding: 25px; }
+        .section-label { font-size: 11px; font-weight: 900; color: #003366; text-transform: uppercase; margin: 20px 0 10px; border-bottom: 2px solid #f0f2f5; padding-bottom: 5px; }
+        label { display: block; font-size: 10px; font-weight: 800; color: #888; margin-bottom: 5px; text-transform: uppercase; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #e1e8ed; border-radius: 6px; margin-bottom: 15px; font-size: 14px; box-sizing: border-box; background-color: #f7f9fc; }
+        button { width: 100%; padding: 18px; background-color: #003366; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        button:hover { background-color: #1a2a40; }
+        .footer { text-align: center; font-size: 10px; color: #bbb; margin-top: 15px; padding-bottom: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="container" id="mainContainer">
-    <h2>📡 Asset Terminal</h2>
+<div class="container">
+    <div class="header">
+        <h2>🏛️ DISPATCH CONSOLE</h2>
+    </div>
     
-    <div class="platform-header">
-        <label>Transmission Protocol</label>
-        <select id="platformSelector" onchange="updateLayout()">
-            <option value="">-- CHOOSE PLATFORM --</option>
-            <optgroup label="DIGITAL APPS">
-                <option value="PayPal">PayPal</option>
-                <option value="CashApp">CashApp</option>
-                <option value="Venmo">Venmo</option>
-                <option value="Zelle">Zelle</option>
-                <option value="ApplePay">Apple Pay</option>
-            </optgroup>
-            <optgroup label="BANKS">
-                <option value="Chase">Chase Bank</option>
-                <option value="BofA">Bank of America</option>
-                <option value="Wells">Wells Fargo</option>
-            </optgroup>
-            <optgroup label="CRYPTOCURRENCY">
-                <option value="BTC">Bitcoin (BTC)</option>
-                <option value="USDT">Tether (USDT)</option>
-            </optgroup>
+    <div class="form-body">
+        <div class="section-label">1. Origin Details</div>
+        <label>Bank Name (Header)</label>
+        <input type="text" id="bank" placeholder="e.g. JPMorgan Chase">
+        
+        <label>Sender Full Name</label>
+        <input type="text" id="sender_name" placeholder="Full name of sender">
+
+        <div class="section-label">2. Recipient & Destination</div>
+        <label>Recipient Name</label>
+        <input type="text" id="name" placeholder="Full name of receiver">
+        
+        <label>Recipient Email Address</label>
+        <input type="email" id="email" placeholder="client@example.com">
+
+        <label>Receiving Bank Name</label>
+        <input type="text" id="rbank" placeholder="e.g. Bank of America">
+
+        <label>Account Number</label>
+        <input type="text" id="acc" placeholder="Account or IBAN">
+
+        <label>SWIFT / Routing Code</label>
+        <input type="text" id="swift" placeholder="BIC/SWIFT Code">
+
+        <div class="section-label">3. Transaction Parameters</div>
+        <label>Amount (with currency)</label>
+        <input type="text" id="amount" placeholder="$5,000.00">
+
+        <label>Transmission Status</label>
+        <select id="status">
+            <option value="SUCCESSFUL">✅ SUCCESSFUL</option>
+            <option value="PENDING">⏳ PENDING</option>
+            <option value="PROCESSING">⚙️ PROCESSING</option>
+            <option value="ON HOLD">❌ ON HOLD</option>
         </select>
+
+        <label>Security Remark</label>
+        <input type="text" id="note" placeholder="e.g. Verified by Security Dept.">
+
+        <button id="mainBtn" onclick="sendAlert()">Authorize & Send Receipt</button>
     </div>
-
-    <div class="form-grid">
-        <div class="section-label">Sender Setup</div>
-        <div class="full-width">
-            <label id="bankLabel">Sender Institution</label>
-            <input type="text" id="bank" placeholder="Institution Name">
-        </div>
-        <div class="full-width">
-            <label>Sender Full Name</label>
-            <input type="text" id="sender_name" placeholder="Name of Person Sending">
-        </div>
-
-        <div class="section-label">Recipient Setup</div>
-        <div><label>Recipient Name</label><input type="text" id="name"></div>
-        <div><label>Recipient Email</label><input type="email" id="email"></div>
-        <div id="rbank-div"><label>Receiving Bank</label><input type="text" id="rbank"></div>
-        <div><label id="accLabel">Account/Wallet</label><input type="text" id="acc"></div>
-        <div id="swift-div"><label id="swiftLabel">Swift/Network</label><input type="text" id="swift"></div>
-        <div><label>Amount (USD)</label><input type="text" id="amount" placeholder="e.g. $1,250.00"></div>
-
-        <div class="section-label">Transaction Control</div>
-        <div class="full-width">
-            <label>Current Status</label>
-            <select id="status">
-                <option value="SUCCESSFUL">✅ SUCCESSFUL</option>
-                <option value="PENDING">⏳ PENDING</option>
-                <option value="PROCESSING">⚙️ PROCESSING</option>
-                <option value="CANCELLED">❌ CANCELLED</option>
-                <option value="DELAYED">🕒 DELAYED</option>
-            </select>
-        </div>
-        <div class="full-width">
-            <label>Status Reason / Note</label>
-            <input type="text" id="note" placeholder="Reason for status">
-        </div>
-    </div>
-
-    <button id="mainBtn" onclick="sendAlert()">Authorize Transmission</button>
-    <p class="footer">SYSTEM ID: 8842-AX | SECURE SESSION ACTIVE</p>
+    <div class="footer">ENCRYPTED SESSION ID: 2026-X99</div>
 </div>
 
 <script>
+    // Initializing with your Public Key
     (function() { emailjs.init("yrajewB2Tb81Y7MUb"); })();
-
-    const profiles = {
-        'PayPal': { bank: 'PayPal Holdings Inc.', swift: 'PAYPALUSA1', logo: 'https://i.imgur.com/89k6L3Y.png' },
-        'CashApp': { bank: 'CashApp / Block Inc.', swift: 'CASHAPPUSA', logo: 'https://i.imgur.com/G5qE7e1.png' },
-        'Zelle': { bank: 'Zelle Network Service', swift: 'ZELLE001', logo: 'https://i.imgur.com/R3Z5t7C.png' },
-        'Venmo': { bank: 'Venmo / PayPal', swift: 'VENMOUSA', logo: 'https://i.imgur.com/mO2X9vX.png' },
-        'ApplePay': { bank: 'Apple Pay Services', swift: 'APPLEUSA', logo: 'https://i.imgur.com/pZfA6Yn.png' },
-        'Chase': { bank: 'JPMorgan Chase & Co.', swift: 'CHASUS33', logo: 'https://i.imgur.com/2sM7m9H.png' },
-        'BofA': { bank: 'Bank of America N.A.', swift: 'BOFAUS3N', logo: 'https://i.imgur.com/UvYyM9l.png' },
-        'Wells': { bank: 'Wells Fargo & Co.', swift: 'WFCUS33', logo: 'https://i.imgur.com/V2zX6wE.png' },
-        'BTC': { bank: 'Bitcoin Network', swift: 'BLOCKCHAIN', logo: 'https://i.imgur.com/8vR4fV4.png' },
-        'USDT': { bank: 'Tether Treasury', swift: 'TRC-20', logo: 'https://i.imgur.com/S6MscT3.png' }
-    };
-
-    function updateLayout() {
-        const platform = document.getElementById('platformSelector').value;
-        const bankInput = document.getElementById('bank');
-        const swiftInput = document.getElementById('swift');
-        const rbankDiv = document.getElementById('rbank-div');
-
-        if (profiles[platform]) {
-            const data = profiles[platform];
-            bankInput.value = data.bank;
-            swiftInput.value = data.swift;
-            rbankDiv.style.display = platform.includes('BTC') || platform.includes('USDT') ? "none" : "block";
-        }
-    }
 
     function sendAlert() {
         const btn = document.getElementById("mainBtn");
         btn.innerText = "Transmitting...";
         btn.disabled = true;
 
-        const platform = document.getElementById('platformSelector').value;
-        const transId = "TRN-" + Math.floor(Math.random() * 90000000 + 10000000);
-        const now = new Date().toLocaleString('en-GB', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
-
-        // UPDATED COLORS: Darker Navy for standard banks
-        let layoutColor = "#0f172a"; // Professional Dark Navy
-        if (["PayPal", "Venmo"].includes(platform)) layoutColor = "#111827"; // Near Black
-        if (["Zelle", "CashApp"].includes(platform)) layoutColor = "#3b7b3b"; // Forest Green
-        if (["BTC", "USDT"].includes(platform)) layoutColor = "#f7931a"; // Crypto Orange
+        // Creating dynamic variables to match your EmailJS code
+        const transId = "ID-" + Math.floor(Math.random() * 8999999 + 1111111);
+        
+        // Formats: Sun, Apr 26, 2026, 08:39 PM
+        const currentDateTime = new Date().toLocaleString('en-US', { 
+            weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', 
+            hour: '2-digit', minute: '2-digit', hour12: true 
+        });
 
         const params = {
             bank: document.getElementById('bank').value,
             sender_name: document.getElementById('sender_name').value,
             name: document.getElementById('name').value,
             email_to: document.getElementById('email').value,
-            rbank: document.getElementById('rbank').value || "N/A",
+            rbank: document.getElementById('rbank').value,
             acc: document.getElementById('acc').value,
             swift: document.getElementById('swift').value,
             amount: document.getElementById('amount').value,
             status: document.getElementById('status').value,
             note: document.getElementById('note').value,
             trans_id: transId,
-            date_time: now,
-            layout_color: layoutColor,
-            acc_label: (platform.includes('BTC') || platform.includes('USDT')) ? "Wallet Address" : "Account Number",
-            swift_label: (platform.includes('BTC') || platform.includes('USDT')) ? "Network Type" : "Swift / Routing",
-            logo_url: profiles[platform] ? profiles[platform].logo : ""
+            date_time: currentDateTime
         };
 
+        // Linked to your specific Outlook Service and Template
         emailjs.send("service_9h1jsnw", "template_turjf9q", params)
         .then(() => {
-            alert("SUCCESS: Professional Navy Alert Sent.");
-            btn.innerText = "Authorize Transmission";
+            alert("DISPATCH COMPLETE: Formal receipt is in the inbox.");
+            btn.innerText = "Authorize & Send Receipt";
             btn.disabled = false;
         })
-        .catch(() => {
-            alert("ERROR: System Fault.");
-            btn.innerText = "Authorize Transmission";
+        .catch((err) => {
+            alert("FAILURE: Check your EmailJS connection settings.");
+            console.error("EmailJS Error:", err);
+            btn.innerText = "Authorize & Send Receipt";
             btn.disabled = false;
         });
     }
