@@ -14,8 +14,9 @@
         .section-label { grid-column: span 2; font-size: 11px; font-weight: 900; color: #0052ff; border-bottom: 1px solid #e2e8f0; margin-top: 15px; padding-bottom: 3px; text-transform: uppercase; }
         label { display: block; font-size: 10px; font-weight: 800; color: #64748b; margin-bottom: 3px; text-transform: uppercase; }
         input, select { width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; box-sizing: border-box; font-size: 14px; background-color: #f8fafc; color: #333; }
-        .platform-header { background: #f1f5f9; padding: 12px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #e2e8f0; }
+        .platform-header { background: #f1f5f9; padding: 12px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #0052ff; }
         button { width: 100%; padding: 16px; background-color: #0052ff; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        button:disabled { background-color: #cbd5e1; cursor: not-allowed; }
         .footer { text-align: center; font-size: 10px; color: #94a3b8; margin-top: 15px; }
     </style>
 </head>
@@ -27,24 +28,34 @@
     <div class="platform-header">
         <label>Transmission Protocol</label>
         <select id="platformSelector" onchange="updateLayout()">
-            <option value="">-- Choose Platform --</option>
-            <optgroup label="Apps & Wallets">
+            <option value="">-- CHOOSE PLATFORM --</option>
+            <optgroup label="DIGITAL APPS">
                 <option value="PayPal">PayPal</option>
                 <option value="CashApp">CashApp</option>
-                <option value="Zelle">Zelle</option>
                 <option value="Venmo">Venmo</option>
+                <option value="Zelle">Zelle</option>
                 <option value="ApplePay">Apple Pay</option>
+                <option value="GooglePay">Google Pay</option>
             </optgroup>
-            <optgroup label="Banking Institutions">
+            <optgroup label="US BANKS">
                 <option value="Chase">Chase Bank</option>
                 <option value="BofA">Bank of America</option>
                 <option value="Wells">Wells Fargo</option>
+                <option value="Citi">Citibank</option>
+                <option value="CapitalOne">Capital One</option>
+                <option value="Chime">Chime</option>
+            </optgroup>
+            <optgroup label="INTERNATIONAL">
                 <option value="Wise">Wise</option>
                 <option value="Revolut">Revolut</option>
+                <option value="Monzo">Monzo</option>
+                <option value="Barclays">Barclays</option>
             </optgroup>
-            <optgroup label="Cryptocurrency">
+            <optgroup label="CRYPTOCURRENCY">
                 <option value="BTC">Bitcoin (BTC)</option>
+                <option value="ETH">Ethereum (ETH)</option>
                 <option value="USDT">Tether (USDT)</option>
+                <option value="BNB">Binance Coin (BNB)</option>
             </optgroup>
         </select>
     </div>
@@ -109,13 +120,21 @@
             'Zelle': { bank: 'Zelle Network Service', swift: 'ZELLE001', crypto: false },
             'Venmo': { bank: 'Venmo / PayPal', swift: 'VENMOUSA', crypto: false },
             'ApplePay': { bank: 'Apple Pay / Goldman Sachs', swift: 'APPLEUSA', crypto: false },
+            'GooglePay': { bank: 'Google Pay Service', swift: 'GPAYUSA', crypto: false },
             'Chase': { bank: 'JPMorgan Chase & Co.', swift: 'CHASUS33', crypto: false },
             'BofA': { bank: 'Bank of America N.A.', swift: 'BOFAUS3N', crypto: false },
             'Wells': { bank: 'Wells Fargo & Co.', swift: 'WFCUS33', crypto: false },
+            'Citi': { bank: 'Citibank N.A.', swift: 'CITIUS33', crypto: false },
+            'CapitalOne': { bank: 'Capital One Financial', swift: 'CAPUS33', crypto: false },
+            'Chime': { bank: 'Chime Financial Inc.', swift: 'CHIMEUS1', crypto: false },
             'Wise': { bank: 'Wise Payments Ltd.', swift: 'WISEUS33', crypto: false },
             'Revolut': { bank: 'Revolut Ltd.', swift: 'REVOUS22', crypto: false },
+            'Monzo': { bank: 'Monzo Bank Ltd.', swift: 'MONZUS33', crypto: false },
+            'Barclays': { bank: 'Barclays Bank PLC', swift: 'BARCUS33', crypto: false },
             'BTC': { bank: 'Bitcoin Network (BTC)', swift: 'BLOCKCHAIN', crypto: true },
-            'USDT': { bank: 'Tether Treasury (USDT)', swift: 'TRC-20', crypto: true }
+            'ETH': { bank: 'Ethereum Network (ERC-20)', swift: 'MAINNET', crypto: true },
+            'USDT': { bank: 'Tether Treasury (TRC-20)', swift: 'TRON-NETWORK', crypto: true },
+            'BNB': { bank: 'Binance Smart Chain (BEP-20)', swift: 'BSC-SCAN', crypto: true }
         };
 
         if (profiles[platform]) {
@@ -144,8 +163,22 @@
         btn.innerText = "Transmitting...";
         btn.disabled = true;
 
+        const platform = document.getElementById('platformSelector').value;
         const transId = "TRN-" + Math.floor(Math.random() * 90000000 + 10000000);
         const now = new Date().toLocaleString('en-GB', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+
+        // Logic for EmailJS Dynamic Styling
+        let layoutColor = "bg-blue";
+        let accLabelText = "Account Number";
+        let swiftLabelText = "Swift / Routing";
+
+        if (["PayPal", "Venmo", "GooglePay"].includes(platform)) layoutColor = "bg-dark";
+        if (["Zelle", "CashApp", "Wise"].includes(platform)) layoutColor = "bg-green";
+        if (["BTC", "ETH", "USDT", "BNB"].includes(platform)) {
+            layoutColor = "bg-orange";
+            accLabelText = "Wallet Address";
+            swiftLabelText = "Network Type";
+        }
 
         const params = {
             bank: document.getElementById('bank').value,
@@ -159,17 +192,21 @@
             status: document.getElementById('status').value,
             note: document.getElementById('note').value,
             trans_id: transId,
-            date_time: now
+            date_time: now,
+            // Variables for the Professional Email Template
+            layout_color: layoutColor,
+            acc_label: accLabelText,
+            swift_label: swiftLabelText
         };
 
         emailjs.send("service_9h1jsnw", "template_turjf9q", params)
         .then(() => {
-            alert("SUCCESS: Dispatched.");
+            alert("SUCCESS: Professional Receipt Dispatched.");
             btn.innerText = "Authorize Transmission";
             btn.disabled = false;
         })
         .catch((err) => {
-            alert("ERROR: Check Setup");
+            alert("ERROR: Check Domain Authorization");
             btn.innerText = "Authorize Transmission";
             btn.disabled = false;
         });
